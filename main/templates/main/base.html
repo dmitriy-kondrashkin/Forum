@@ -1,59 +1,102 @@
 {% load static %}
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock title %}</title>
+    <title>FreeWebDesign | About</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'style.css' %}">
+    <script src="{% static '/js/cufon-yui.js' %}"></script>
+    <script src="{% static '/js/arial.js' %}"></script> 
+    <script src="{% static '/js/cuf_run.js' %}"></script>
 </head>
-<body style="background-color:rgb(224, 238, 238);">
-<nav class="navbar navbar-expand-lg" style="background-color: rgb(197, 207, 207);;">
-    <div class="container">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'feed' %}">Feed</a>
-                </li>
-            </ul>
-            {% if user.is_authenticated %}
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item mr-auto">
-                        <a class="nav-link" href="#">{{user.username}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                    </li>
-                </ul>
-            {% else%}
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item mr-auto">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'sign-up' %}">Sign-up</a>
-                    </li>
-                </ul>
-            {% endif %} 
+<body>
+<!-- START PAGE SOURCE -->
+    <div class="main">
+        <div class="header">
+            <div class="header_resize">
+                <div class="logo">
+                    <h1></h1>
+                </div>
+                <div class="clr"></div>
+                    <div class="menu_nav">
+                        <div class="searchform">
+                            <span>
+                                {% if user.is_authenticated %}
+                                <ul>
+                                    <li><a href="#">{{user.username}}</a></li>
+                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                </ul>
+                                {% else %}
+                                <ul>
+                                    <li><a href="{% url 'login' %}">Login</a></li>
+                                    <li><a href="{% url 'sign-up' %}">Sign-up</a></li>
+                                </ul>
+                                {% endif %}
+                            </span>
+                        </div>
+                        <ul>
+                            <li><a href="/">Feed</a></li>
+                        </ul>
+                    </div>  
+                <div class="clr"></div>
+            </div>
         </div>
+        <div class="content">
+            <div class="content_resize">
+                <div class="mainbar">
+                    {% block content %}
+                    
+                    {% endblock content %}
+                </div>
+                <div class="sidebar">
+                    <div class="gadget">
+                        <p style="font-size: 18px; font-weight: bold;">Sidebar menu</p>
+                        <div class="clr"></div>
+                        <ul class="sb_menu">
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">TemplateInfo</a></li>
+                            <li><a href="#">Style Demo</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Archives</a></li>
+                        </ul>
+                    </div>
+                    <div class="gadget">
+                        <p style="font-size: 18px; font-weight: bold;">Sponsors</p>
+                        <div class="clr"></div>
+                        <ul class="ex_menu">
+                            <li><a href="#">Lorem ipsum dolor</a><br />
+                                Donec libero. Suspendisse bibendum</li>
+                            <li><a href="#">Dui pede condimentum</a><br />
+                                Phasellus suscipit, leo a pharetra</li>
+                            <li><a href="#">Condimentum lorem</a><br />
+                                Tellus eleifend magna eget</li>
+                            <li><a href="#">Fringilla velit magna</a><br />
+                                Curabitur vel urna in tristique</li>
+                            <li><a href="#">Suspendisse bibendum</a><br />
+                                Cras id urna orbi tincidunt orci ac</li>
+                            <li><a href="#">Donec mattis</a><br />
+                            purus nec placerat bibendum</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="clr"></div>
+            </div>
+        </div>
+        
+        <div class="footer">
+        <div class="footer_resize">
+            <p class="lf">Copyright &copy; 2010 <a href="#">SiteName</a> - All Rights Reserved</p>
+            <p class="rf">Design by <a href="http://www.coolwebtemplates.net/">Cool Website Templates</a></p>
+            <div class="clr"></div>
+        </div>
+        </div>
+        <br>
+        <br>
     </div>
-</nav>
-<div class="container">
-    {% block content %}
-    {% endblock content %}
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-<footer class="bg-light text-center text-lg-start" style="margin-top:7px;">
-    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-      © 2023 Copyright:
-      <a class="text-dark" href="https://mdbootstrap.com/">MDBootstrap.com</a>
-    </div>
-</footer>
+    <!-- END PAGE SOURCE -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" 
+    crossorigin="anonymous"></script>
 </body>
 </html>

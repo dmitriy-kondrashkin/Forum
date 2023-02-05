@@ -1,0 +1,25 @@
+{% extends 'main/base.html' %}
+{% block title %}Feed{% endblock title %}
+
+{% block content %}
+<div class="article">
+  <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-top: -7px; margin-bottom: -7px;">Create a post</p>
+  <div class="clr"></div>
+  <form method="post">
+    {% csrf_token %}
+    <ol>
+      <li>
+        {{form.title.label}}
+        {{form.title}}
+      </li>
+      <li>
+        {{form.content.label}}
+        {{form.content}}
+      </li>
+        <button type="submit" class="btn btn-primary">Post</button>
+        <div class="clr"></div>
+      </li>
+    </ol>
+  </form>
+</div>
+{% endblock content %}
