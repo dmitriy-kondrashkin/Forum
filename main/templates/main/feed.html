@@ -1,0 +1,32 @@
+{% extends 'main/base.html' %}
+{% block title %}Home{% endblock title %}
+{% block content %}
+    <!-- LEFT COLUMN -->
+    <div style="overflow:auto;">
+            <div class="left hide-mobile">
+            <a href="#">Link 1</a>
+            <a href="#">Link 2</a>
+            <a href="#">Link 3</a>
+            <a href="#">Link 4</a>
+            </div>
+        <div>
+            <!-- MIDDLE COLUMN -->
+            <div class="main" style="background-color: aquamarine;">
+                {% for post in posts  %}
+                    <h2>{{post.title}}</h2>
+                    <p>{{post.content}}</p>  
+            </div>
+                    <!-- RIGHT COLUMN -->
+                    <div class="right hide-mobile">
+                        <h2>{{post.author}}</h2>
+                        <p>Post author information
+                            blah
+                        </p>
+                        <p>p</p>
+                        <p>p</p>
+                        <p>blah</p>
+                    </div>
+                {% endfor %}
+        </div>
+    </div> 
+{% endblock content %}

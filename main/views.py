@@ -1,9 +1,14 @@
+"""Django imports"""
 from django.shortcuts import render, redirect
+"""Current project imports"""
 from .forms import PostCreateForm
+from .models import Post, Vote
 
 # Create your views here.
-def feed (request):
-    return render(request, 'main/home.html')
+def feed(request):
+    posts = Post.objects.all().order_by('-created_at')
+    return render(request, 'main/feed.html', {'posts':posts})
+
 
 def post_create(request):
     if request.method == 'POST':
