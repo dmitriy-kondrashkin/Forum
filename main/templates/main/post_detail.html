@@ -1,39 +1,46 @@
+    
 {% extends 'main/base.html' %}
 {% block title %}{{post.title}} : {{post.author.username}}{% endblock title %}
-
+    
 {% block content %}
-<div class="article">
-    <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-top: -7px; margin-bottom: -7px;">{{post.title}}</p>
-    <div class="clr"></div>
-    <p>Posted by <a href="#">{{post.author}}</a>
-    <p>{{post.content}}<p>  
-        <span class="date">Posted: {{post.created_at|date:'j b Y'}}</span>
-        <a href="#"><strong>Edit</strong></a>
-    </p>
-    <hr>
-  </div>
-  {% if comments %}
-  <div class="article">
-    <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-top: -7px; margin-bottom: -7px;">
-        {{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}:</p>
-    {% for comment in comments %}
-    <div class="clr"></div>
-    <div class="comment"> <a href="#"><img src="/media/default/avatar.jpg" width="40" height="40" alt="" class="userpic" /></a>
-      <p><a href="#">{{comment.author}}</a> Says:<br />
-        {{comment.created_at|date:"F jS,"}} at {{comment.created_at|date:"H:i a"}}</p>
-      <p>{{comment.content}}</p>
+    <div class="article">
+        <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-top: -7px; margin-bottom: -7px;">{{post.title}}</p>
+            <div class="clr"></div>
+            <p>Posted by <a href="#">{{post.author}}</a>
+            <p>{{post.content}}<p>  
+            <span class="date">Posted: {{post.created_at|date:'j b Y'}}</span>
+            <a href="#"><strong>Edit</strong></a>
+        </p>
+        <hr>
     </div>
+    {% if comments %}
+        <div class="article">
+            <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-top: -7px; margin-bottom: -7px;">
+                {{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}:
+            </p>
+    {% for comment in comments %}
+        <div class="clr"></div>
+        <div class="comment"> <a href="#"><img src="/media/default/avatar.jpg" width="40" height="40" alt="" class="userpic" /></a>
+            <p><a href="#">{{comment.author}}</a> Says:<br />
+            {{comment.created_at|date:"F jS,"}} at {{comment.created_at|date:"H:i a"}}</p>
+            <p>{{comment.content}}</p>
+        </div>
     {% endfor %}
-  </div>
-  {% endif %}
+    </div>
+    {% endif %}
 
-  <div class="article">
-    <p style="font-size: 26px; font-weight: bold;">Leave a comment</p>
-    <div class="clr"></div>
-    <form action="" method="post">
-        {% csrf_token %}
-        <div class="flex" style="display: flex;">
-        {{comment_form}} <button style="margin-left: 10px;" class="btn btn-primary">Post</button>
-        </div>        
-  </div>
+    <div class="article">
+        <p style="font-size: 26px; font-weight: bold;">Leave a comment</p>
+        <div class="clr"></div>
+        {% if user.is_authenticated %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="flex" style="display: flex;">
+            {{comment_form}} <button style="margin-left: 10px;" class="btn btn-primary">Post</button>
+        </form>
+    </div>
+        {% else %}
+            <a class="btn btn-secondary" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a>   
+        {% endif %}
+</div> 
 {% endblock content %}

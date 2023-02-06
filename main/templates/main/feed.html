@@ -20,9 +20,9 @@
                 <a href="{% url 'main:post-detail' post.id %}" class="com">No comments yet</a>    
             {% endif %}
                 <span class="date">On {{post.created_at|date:'j b Y'}}</span> 
-                Posted by <a href="#">{{user.username}}</a>
+                Posted by <a href="#">{{post.author}}</a>
             <p>{{post.content|safe}}</p>
-            <p class="spec"><a href="{% url 'main:post-detail' post.id %}" class="rm">Read more &raquo;</a></p>
+            <p class="spec"><a href="{% url 'main:post-detail' slug=post.slug %}" class="rm">Read more &raquo;</a></p>
             <hr>
         </div>
     {% endfor %}
