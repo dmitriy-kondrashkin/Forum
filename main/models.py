@@ -44,4 +44,17 @@ class Comment(models.Model):
     #     return reverse('post-detail', kwargs={'pk': self.pk})    
         
     def __str__(self):
-        return f'Comment by "{self.author}" to post "{self.post}"'    
+        return f'Comment by "{self.author}" to post "{self.post}"'
+
+
+class CommentReply(models.Model):
+    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(timezone.now())
+    
+    class Meta:
+        ordering = ['created_at']    
+
+    def __str__(self):
+        return f'Reply by {self.author} to comment by {self.comment.author}'

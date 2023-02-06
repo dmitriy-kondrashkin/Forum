@@ -1,5 +1,5 @@
 {% extends 'main/base.html' %}
-{% block title %}Feed{% endblock title %}
+{% block title %}{{post.title}} : {{post.author.username}}{% endblock title %}
 
 {% block content %}
 <div class="article">
