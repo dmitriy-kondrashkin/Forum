@@ -9,6 +9,10 @@
     <script src="{% static '/js/cufon-yui.js' %}"></script>
     <script src="{% static '/js/arial.js' %}"></script> 
     <script src="{% static '/js/cuf_run.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 </head>
 <body>
 <!-- START PAGE SOURCE -->
@@ -24,7 +28,7 @@
                             <span>
                                 {% if user.is_authenticated %}
                                 <ul>
-                                    <li><a href="#">{{user.username}}</a></li>
+                                    <li><a href="{% url 'profile' user.username %}">{{user.username}}</a></li>
                                     <li><a href="{% url 'logout' %}">Logout</a></li>
                                 </ul>
                                 {% else %}
@@ -42,6 +46,8 @@
                 <div class="clr"></div>
             </div>
         </div>
+        <br>
+        {% include 'main/messages.html' %}
         <div class="content">
             <div class="content_resize">
                 <div class="mainbar">

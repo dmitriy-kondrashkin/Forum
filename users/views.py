@@ -1,10 +1,16 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 """
 AUTH
 """
 from .forms import SignupForm, LoginForm
 from django.contrib.auth import login, logout, authenticate
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+"""
+IMPORT FROM CURRENT PROJECT
+"""
+from .forms import UserUpdateForm
 # Create your views here.
 def custom_login(request):
     if request.method == 'POST':
@@ -16,15 +22,15 @@ def custom_login(request):
             )
             if user is not None:
                 login(request, user)
+                messages.success(request,f'You have been successfully\
+                                 logged in as {user.username}')
                 return redirect('/')
+            else:
+                for error in list(form.errors.items()):
+                    messages.error(request, error)
     else:
         form = LoginForm()
     return render(request, 'users/login.html', {'form':form})
-
-
-def custom_logout(request):
-    logout(request)
-    return redirect('/')
 
 
 def custom_signup(request):
@@ -34,7 +40,32 @@ def custom_signup(request):
             user = form.save(commit=False)
             user.save()
             return redirect('login')
+        else:
+            for error in list(form.errors.items()):
+                messages.error(request, error)
     else:
         form = SignupForm()
     return render(request, 'users/sign-up.html', {'form':form})
 
+
+def custom_logout(request):
+    logout(request)
+    return redirect('/')
+
+
+@login_required
+def profile(request, username):
+    if request.method == 'POST':
+        user = request.user
+        form = UserUpdateForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            user_form = form.save()
+            messages.success(request, f'{user_form.username}, your profile has been successfully updated!')
+            return redirect('profile', user_form.username)
+        else:
+            messages.error(f'Something went wrong...')
+    user = get_user_model().objects.filter(username=username).first()
+    if user:
+        form = UserUpdateForm(instance=user)
+        return render(request, 'users/profile.html', {'form':form})
+    return redirect('/')

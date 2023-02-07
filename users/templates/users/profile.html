@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+{% block title %}update profile{% endblock title %}
+    
+{% block content %}
+{% if user.username == form.instance.username %}
+    <div class="article">
+        <h5> Profile update: </h5>
+        <form action="" method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button class="btn btn-success" type="submit">Update</button>
+        </form>
+    </div>
+{% else %}
+    <div class="article">
+        <h4>@{{form.instance.username}} profile page</h4>
+        <p>{{form.instance.first_name}}</p>
+        <p>{{form.instance.last_name}}</p>
+    </div>
+{% endif %}
+{% endblock content%}

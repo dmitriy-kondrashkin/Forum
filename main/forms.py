@@ -1,6 +1,5 @@
 from django import forms
 from .models import Post, Comment
-from django.contrib.auth import get_user_model
 
 
 class PostCreateForm(forms.ModelForm):
@@ -19,6 +18,7 @@ class PostCreateForm(forms.ModelForm):
         model = Post
         fields = ['title', 'content']
 
+
 class CommentForm(forms.ModelForm):
     content = forms.CharField(widget=forms.TextInput(
         attrs={
@@ -30,3 +30,4 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
+                 

@@ -1,0 +1,36 @@
+<div class="container" style="width:1000px">
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <div id="alert" class="text-center alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message|safe|escape }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% elif message.tags == 'error' %}
+                <div id="alert" class="text-center alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ message|safe }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% elif message.tags == 'info' %}
+                <div id="alert" class="text-center alert alert-info alert-dismissible fade show" role="alert">
+                    {{ message|safe|escape }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% elif message.tags == 'warning' %}
+                <div id="alert" class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+                    {{ message|safe|escape }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <script type="text/javascript">
+        setTimeout(function () {
+
+            // Closing the alert
+            $('.alert').alert('close');
+        }, 5000);
+    </script>
+   
+</div>

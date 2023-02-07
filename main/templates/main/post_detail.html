@@ -1,21 +1,36 @@
-    
 {% extends 'main/base.html' %}
 {% block title %}{{post.title}} : {{post.author.username}}{% endblock title %}
     
 {% block content %}
     <div class="article">
         <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-top: -7px; margin-bottom: -7px;">{{post.title}}</p>
-            <div class="clr"></div>
-            <p>Posted by <a href="#">{{post.author}}</a>
-            <p>{{post.content}}<p>  
-            <span class="date">Posted: {{post.created_at|date:'j b Y'}}</span>
-            <a href="#"><strong>Edit</strong></a>
-        </p>
-        <hr>
+        <div class="clr"></div>
+        <p>Posted by <a href="#">{{post.author}}</a>
+        <p>{{post.content|safe}}<p>
+        {% if user == post.author %}
+            <table style="margin-top: -20px;">
+                <tr>
+                    <td>
+                        <form action="{% url 'main:post-update' slug=post.slug %}" method="post">
+                            <a href="{% url 'main:post-update' slug=post.slug %}">Update</a>
+                        </form>
+                    </td>
+                    <td style="width: 550px;"></td>
+                    <td>
+                        <form action="{% url 'main:post-delete' slug=post.slug %}" method="post">
+                            <a style="float:right" href="{% url 'main:post-delete' slug=post.slug %}">Delete</a>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+        {% else %}
+            <hr style="margin-top: -27px;">
+        {% endif %}     
     </div>
     {% if comments %}
         <div class="article">
-            <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-top: -7px; margin-bottom: -7px;">
+            <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-bottom: -7px;">
                 {{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}:
             </p>
     {% for comment in comments %}
@@ -25,6 +40,25 @@
             {{comment.created_at|date:"F jS,"}} at {{comment.created_at|date:"H:i a"}}</p>
             <p>{{comment.content}}</p>
         </div>
+        {% if user == comment.author %}
+            <table>
+                <tr>
+                    <td>
+                        <form action="{% url 'main:comment-update' slug=comment.slug %}" method="post">
+                            {% csrf_token %}
+                            <a style="float:right" href="{% url 'main:comment-update' slug=comment.slug %}">Update</a>
+                        </form> 
+                    </td>
+                    <td style="width: 550px;"></td>
+                    <td>
+                        <form action="{% url 'main:comment-delete' slug=comment.slug %}" method="post">
+                            {% csrf_token %}
+                            <a style="float:right" href="{% url 'main:comment-delete' slug=comment.slug %}">Delete</a>
+                        </form> 
+                    </td>
+                </tr>
+            </table>
+        {% endif %}
     {% endfor %}
     </div>
     {% endif %}

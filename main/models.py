@@ -3,20 +3,16 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.utils.text import slugify
+from django.utils.crypto import get_random_string
 
 # Create your models here.
 class Post(models.Model):
-    slug = models.SlugField('Post slug', null=False, blank=False, unique=True)
+    slug = models.SlugField('Post slug', max_length=150, null=False, blank=False, unique=True)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     title = models.CharField(max_length=150)
     content = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def save(self, *args, **kwargs):
-        value = self.title
-        self.slug = slugify(value, allow_unicode=True)
-        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['created_at']
@@ -30,6 +26,14 @@ class Post(models.Model):
     def __str__(self):
         return f'{self.title}'
     
+    def save(self, *args, **kwargs):
+        if Post.objects.filter(title=self.title).exists():
+            value = f'{get_random_string(length=2)}{self.title}{get_random_string(length=4)}'
+            self.slug = slugify(value, allow_unicode=True)
+        else:
+            self.slug = slugify(self.title, allow_unicode=True)
+        super(Post, self).save(*args, **kwargs)
+
     @property
     def get_comment_numbers(self):
         return Comment.objects.filter(post=self).count()
@@ -41,6 +45,7 @@ class Vote(models.Model):
 
 
 class Comment(models.Model):
+    slug = models.SlugField('Comment slug', max_length=150, null=False, blank=False, unique=True)
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     content = models.TextField()
@@ -49,9 +54,18 @@ class Comment(models.Model):
     class Meta:
         ordering = ['created_at']
 
-    # def get_absolute_url(self):
-    #     return reverse('post-detail', kwargs={'pk': self.pk})    
-        
+    def save(self, *args, **kwargs):
+        if Comment.objects.filter(content=self.content).exists():
+            value = f'{get_random_string(length=2)}{self.content}{get_random_string(length=4)}'
+            self.slug = slugify(value, allow_unicode=True)
+        else:
+            self.slug = slugify(self.content, allow_unicode=True)
+        super(Comment, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        kwargs = {'slug': self.post.slug}
+        return reverse('main:post-detail', kwargs=kwargs)
+
     def __str__(self):
         return f'Comment by "{self.author}" to post "{self.post}"'
 

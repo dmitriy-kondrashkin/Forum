@@ -15,14 +15,28 @@
             <div class="clr"></div>
             <p class="infopost">
             {% if comments and post.get_comment_numbers != 0 %}
-                <a href="{% url 'main:post-detail' post.id %}" class="com">{{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}</a> 
+                <a href="{% url 'main:post-detail' slug=post.slug %}" class="com">{{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}</a> 
             {% else %}
-                <a href="{% url 'main:post-detail' post.id %}" class="com">No comments yet</a>    
+                <a href="{% url 'main:post-detail' slug=post.slug %}" class="com">No comments yet</a>    
             {% endif %}
                 <span class="date">On {{post.created_at|date:'j b Y'}}</span> 
-                Posted by <a href="#">{{post.author}}</a>
+                Posted by <a href="{% url 'profile' post.author %}">{{post.author}}</a>
             <p>{{post.content|safe}}</p>
-            <p class="spec"><a href="{% url 'main:post-detail' slug=post.slug %}" class="rm">Read more &raquo;</a></p>
+            <table>
+                {% if user == post.author %}
+                <td>
+                    <form action="{% url 'main:post-delete' slug=post.slug %}">
+                        {% csrf_token %}
+                        <a href="{% url 'main:post-delete' slug=post.slug %}">Delete</a>
+                    </form>
+                </td>
+                {% endif %}
+                <td>
+                </td>
+                <td>
+                    <a href="{% url 'main:post-detail' slug=post.slug %}" class="rm">Read more &raquo;</a>
+                </td>
+            </table>
             <hr>
         </div>
     {% endfor %}

@@ -7,5 +7,8 @@ urlpatterns = [
     path('', views.feed, name='feed'),
     path('post_create/', views.post_create, name='post-create'),
     path('post/<slug>/', views.post_detail, name='post-detail'),
-    #path('post/<slug:slug>/'),
+    path('post/<slug>/delete', views.post_delete, name='post-delete'),
+    path('post/<slug>/update', views.post_update, name='post-update'),
+    path('comment/<slug>/delete', views.comment_delete, name='comment-delete'),
+    path('comment/<slug>/update', views.comment_update, name='comment-update'),
 ]
