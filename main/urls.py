@@ -11,4 +11,5 @@ urlpatterns = [
     path('post/<slug>/update', views.post_update, name='post-update'),
     path('comment/<slug>/delete', views.comment_delete, name='comment-delete'),
     path('comment/<slug>/update', views.comment_update, name='comment-update'),
+    path('comment_reply/<slug>/delete', views.reply_comment_delete, name='comment-reply-delete')
 ]

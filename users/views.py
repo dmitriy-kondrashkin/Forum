@@ -63,7 +63,8 @@ def profile(request, username):
             messages.success(request, f'{user_form.username}, your profile has been successfully updated!')
             return redirect('profile', user_form.username)
         else:
-            messages.error(f'Something went wrong...')
+            for error in list(form.errors.values()):
+                messages.error(request, error)
     user = get_user_model().objects.filter(username=username).first()
     if user:
         form = UserUpdateForm(instance=user)

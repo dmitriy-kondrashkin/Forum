@@ -38,15 +38,20 @@ def post_create(request):
 
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
-    comments = Comment.objects.filter(post=post).order_by('-created_at')
+    comments = Comment.objects.filter(post=post, reply=None).order_by('-created_at')
     if request.method == 'POST':
         comment_form = CommentForm(request.POST or None)
         if comment_form.is_valid():
             content = request.POST.get('content')
+            reply_id = request.POST.get('comment_id')
+            comment_qs = None
+            if reply_id:
+                comment_qs = Comment.objects.get(id=reply_id)
             comment = Comment.objects.create(
                 post = post,
                 author = request.user,
-                content = content
+                content = content,
+                reply = comment_qs
             )
             comment.save()
             return redirect(post.get_absolute_url())
@@ -79,6 +84,21 @@ def comment_delete(request, slug):
         return redirect(comment.get_absolute_url())
     return redirect('/')
 
+
+@login_required
+def reply_comment_delete(request, slug):
+# get current comment, get replies for current comment, check if reply author is request user, then delete reply
+    comment = get_object_or_404(Comment, slug=slug)
+    reply = Comment.objects.filter(reply_id = comment.id, author = request.user).first()
+    #such id reply which will equal to comment id
+    if reply:
+        if reply.author == request.user:
+            reply.delete()
+            return redirect(comment.get_absolute_url())
+    else:
+        messages.error(request, "You don't have permission to do that!")
+        return redirect(comment.get_absolute_url())
+    return redirect('/')
 
 @login_required
 def post_update(request, slug):

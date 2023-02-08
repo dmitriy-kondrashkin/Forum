@@ -24,7 +24,8 @@ class UserUpdateForm(forms.ModelForm):
         exclude = ('date_joined', 'last_login')
         fields = ['first_name',
                   'last_name',
-                  'email']
+                  'email',
+                  'image']
         
         widgets = {
             'first_name':forms.TextInput(attrs={'class':'form-control'}),

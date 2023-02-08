@@ -49,7 +49,8 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     content = models.TextField()
-    created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add = True)
+    reply = models.ForeignKey('Comment' , null=True , blank=True , on_delete=models.CASCADE , related_name='replies')
 
     class Meta:
         ordering = ['created_at']
@@ -62,22 +63,22 @@ class Comment(models.Model):
             self.slug = slugify(self.content, allow_unicode=True)
         super(Comment, self).save(*args, **kwargs)
 
+    @property
+    def children(self):
+        return Comment.objects.filter(parent=self).reverse()
+
+    @property
+    def is_parent(self):
+        if self.parent is None:
+            return True
+        return False
+    
+    def num_of_replies(self):
+        return Comment.objects.filter(reply=self).count()
+
     def get_absolute_url(self):
         kwargs = {'slug': self.post.slug}
         return reverse('main:post-detail', kwargs=kwargs)
 
     def __str__(self):
         return f'Comment by "{self.author}" to post "{self.post}"'
-
-
-class CommentReply(models.Model):
-    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(timezone.now())
-    
-    class Meta:
-        ordering = ['created_at']    
-
-    def __str__(self):
-        return f'Reply by {self.author} to comment by {self.comment.author}'

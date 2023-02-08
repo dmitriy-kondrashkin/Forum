@@ -19,7 +19,7 @@
             {% else %}
                 <a href="{% url 'main:post-detail' slug=post.slug %}" class="com">No comments yet</a>    
             {% endif %}
-                <span class="date">On {{post.created_at|date:'j b Y'}}</span> 
+                <span class="date">{{post.created_at|timesince}} ago</span> 
                 Posted by <a href="{% url 'profile' post.author %}">{{post.author}}</a>
             <p>{{post.content|safe}}</p>
             <table>

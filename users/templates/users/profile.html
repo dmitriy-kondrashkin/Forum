@@ -1,21 +1,50 @@
 {% extends 'main/base.html' %}
 {% block title %}update profile{% endblock title %}
-    
+
 {% block content %}
 {% if user.username == form.instance.username %}
     <div class="article">
         <h5> Profile update: </h5>
-        <form action="" method="post">
+        <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{form.as_p}}
+            <p>
+                {{form.first_name.label}}:    
+                {{form.first_name}}
+            </p>
+            <p>
+                {{form.last_name.label}}:
+                {{form.last_name}}
+            </p>
+            <p>
+                {{form.email.label}}:
+                {{form.email}}
+            </p>
+            <table>
+                <tr>
+                    <td>
+                        <p>
+                            {{form.image.label}}:
+                            {{form.image}}
+                        </p>
+                    </td>
+                    <td style="width: 224px;">
+
+                    </td>
+                    <td>
+                        <img style="margin-left: 2px;" src="{{ form.instance.image.url }}" width="100" height="100" title="Upload new image">
+                    </td>
+                </tr> 
+            </table>
             <button class="btn btn-success" type="submit">Update</button>
         </form>
     </div>
 {% else %}
-    <div class="article">
-        <h4>@{{form.instance.username}} profile page</h4>
-        <p>{{form.instance.first_name}}</p>
-        <p>{{form.instance.last_name}}</p>
+    <div class="article text-center">
+        <img style="margin-left: 2px;" src="{{ form.instance.image.url }}" width="100" height="100">
+        <p style="font-size: 16px;">Username: <strong>{{form.instance.username}}</strong></p>
+        <p style="font-size: 16px;">First name: <strong>{{form.instance.first_name}}</strong></p>
+        <p style="font-size: 16px;">Last name: <strong>{{form.instance.last_name}}</strong></p>
+        <p style="font-size: 16px;">Joined: <strong>{{form.instance.date_joined}}</strong></p>
     </div>
 {% endif %}
 {% endblock content%}

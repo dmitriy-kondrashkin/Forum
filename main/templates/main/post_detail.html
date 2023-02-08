@@ -33,7 +33,47 @@
             <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-bottom: -7px;">
                 {{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}:
             </p>
+
+<!-- |timesince -->
+            {% for comment in comments %}
+            <div class="comment">
+                <blockquote class="blockquote">
+                    <p>{{comment.content}}</p>{{comment.num_of_replies}}
+                    <footer class="blockquote-footer">by {{comment.author|capfirst}}
+                        <button type="button" name="button" class="reply-btn btn btn-otline">Reply</button>
+                    </footer>
+                </blockquote>
+
+                <div class="replied-comments container" style="display: none;">
+                    {% for reply in comment.replies.all %}
+                        <blockquote class="blockquote">
+                            <p>{{reply.content}}</p>
+                            <footer class="blockquote-footer">by {{reply.author|capfirst}}</footer>
+                            <a href="{% url 'main:comment-reply-delete' slug=comment.slug %}">delete</a>
+                        </blockquote>
+                    {% endfor %}
+                    <div class="form-group row">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                            {{comment_form}}
+                            <input type="submit" value="Submit" class="btn btn-outline-success">
+                        </form>
+                    </div>
+                </div>  
+            </div>
+            {%  endfor %}
+
+
     {% for comment in comments %}
+        
+            
+
+
+
+
+
+
         <div class="clr"></div>
         <div class="comment"> <a href="#"><img src="/media/default/avatar.jpg" width="40" height="40" alt="" class="userpic" /></a>
             <p><a href="#">{{comment.author}}</a> Says:<br />
@@ -77,4 +117,9 @@
             <a class="btn btn-secondary" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a>   
         {% endif %}
 </div> 
+
+<script>$('.reply-btn').click(function() {
+    $(this).parent().parent().next('.replied-comments').fadeToggle()
+});</script>
+
 {% endblock content %}
