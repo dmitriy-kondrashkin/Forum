@@ -1,21 +1,30 @@
 """Django imports"""
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 """Current project imports"""
 from .forms import PostCreateForm, CommentForm
-from .models import Post, Vote, Comment
+from .models import Post, Comment
 from users.forms import UserUpdateForm
+from .utils import is_ajax
+from django.db.models import Q, Count, BooleanField
+
 
 
 
 # Create your views here.
-def feed(request):
+def feed(request, slug):
     comments = Comment.objects.all()
-    posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'main/feed.html', {'posts':posts,
-                                              'comments':comments})
+    count_filter = Q(votes=request.user)
+    vote_case = Count('votes', filter=count_filter, output_field=BooleanField())
+    posts = Post.objects \
+    .annotate(is_voted=vote_case) \
+    .all().order_by('-created_at')
+    return render(request, 'main/feed.html', {'posts': posts,
+                                              'comments': comments})
 
 
 @login_required
@@ -39,6 +48,10 @@ def post_create(request):
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
     comments = Comment.objects.filter(post=post, reply=None).order_by('-created_at')
+    is_voted = False
+    if post.votes.filter(id=request.user.id).exists():
+        is_voted = True
+
     if request.method == 'POST':
         comment_form = CommentForm(request.POST or None)
         if comment_form.is_valid():
@@ -62,7 +75,8 @@ def post_detail(request, slug):
         comment_form = CommentForm()
     return render(request, 'main/post_detail.html', {'post':post,
                                                      'comment_form':comment_form,
-                                                     'comments':comments})
+                                                     'comments':comments,
+                                                     'is_voted':is_voted})
 
 
 @login_required
@@ -74,6 +88,25 @@ def post_delete(request, slug):
     else:
         messages.error(f"It's not your post!")
     return redirect('/')
+
+
+@login_required
+def post_vote(request, slug):
+    post = get_object_or_404(Post, id=request.POST.get('id'), slug=slug)
+    is_voted = False
+    if post.votes.filter(id=request.user.id).exists():
+        post.votes.remove(request.user)
+        is_voted = False
+    else:
+        post.votes.add(request.user)
+        is_voted = True
+    context = {
+        'post': post,
+        'is_voted': is_voted,
+    }
+    if is_ajax(request):
+        html = render_to_string('main/votes.html', context, request)
+        return JsonResponse({'form':html})
 
 
 @login_required
@@ -99,6 +132,7 @@ def reply_comment_delete(request, slug):
         messages.error(request, "You don't have permission to do that!")
         return redirect(comment.get_absolute_url())
     return redirect('/')
+
 
 @login_required
 def post_update(request, slug):

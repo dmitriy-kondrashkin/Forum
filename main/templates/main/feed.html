@@ -9,6 +9,9 @@
     </table>    
 </div>
     {% for post in posts %}
+        <div id="vote-section">
+            {% include 'main/votes.html' %}
+        </div>
         <div class="article">
             <div class="clr"></div>
             <p style="font-size: 18px; font-weight: bold;">{{post.title}}</p>
@@ -40,4 +43,27 @@
             <hr>
         </div>
     {% endfor %}
+
+    <script>
+        $(document).ready(function(event){
+            $(document).on('click','#vote', function(event){
+                event.preventDefault();
+                var pk = $(this).attr('value');
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'main:post-vote' slug=post.slug %}",
+                    data: {'id':pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                    dataType: 'json',
+                    success: function(resoponse){
+                        $('#vote-section').html(resoponse['form'])
+                        console.log($('#vote-section').html(resoponse['form'])); 
+                    },
+                    error: function(rs, e){
+                        console.log(rs.responseText);
+                    }
+                })
+            });
+        });
+    </script>
+
 {% endblock content %}
