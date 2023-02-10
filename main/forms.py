@@ -21,10 +21,9 @@ class PostCreateForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
-    content = forms.CharField(label='', widget=forms.Textarea(attrs={
+    content = forms.CharField(label='', widget=forms.TextInput(attrs={
         'class':'form-control',
-        'placeholder':'text goes here!', 
-        'rows':4, 'cols':50
+        'placeholder':'Comment...',
         }))
 
     class Meta:

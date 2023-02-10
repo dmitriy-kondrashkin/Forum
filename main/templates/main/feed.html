@@ -8,62 +8,65 @@
             <th style="width: 565px;"><a style="text-decoration: none;" href="{% url 'main:post-create' %}"><input class="form-control" type="text" placeholder="Create post..."></a></th>
     </table>    
 </div>
+
     {% for post in posts %}
-        <div id="vote-section">
-            {% include 'main/votes.html' %}
-        </div>
+
+
         <div class="article">
-            <div class="clr"></div>
-            <p style="font-size: 18px; font-weight: bold;">{{post.title}}</p>
-            <div class="clr"></div>
-            <p class="infopost">
-            {% if comments and post.get_comment_numbers != 0 %}
-                <a href="{% url 'main:post-detail' slug=post.slug %}" class="com">{{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}</a> 
-            {% else %}
-                <a href="{% url 'main:post-detail' slug=post.slug %}" class="com">No comments yet</a>    
-            {% endif %}
-                <span class="date">{{post.created_at|timesince}} ago</span> 
-                Posted by <a href="{% url 'profile' post.author %}">{{post.author}}</a>
-            <p>{{post.content|safe}}</p>
-            <table>
-                {% if user == post.author %}
-                <td>
-                    <form action="{% url 'main:post-delete' slug=post.slug %}">
-                        {% csrf_token %}
-                        <a href="{% url 'main:post-delete' slug=post.slug %}">Delete</a>
-                    </form>
-                </td>
-                {% endif %}
-                <td>
-                </td>
-                <td>
-                    <a href="{% url 'main:post-detail' slug=post.slug %}" class="rm">Read more &raquo;</a>
-                </td>
-            </table>
-            <hr>
+            <div class="row">
+                <div class="col-sm-1 text-center" style="font-size: 22px; margin: auto;">
+                    <div class="vote-section">
+                        <form action="{% url 'main:post-upvote' slug=post.slug %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <input type="image" src="/media/caret-up-solid.svg" style="border:none">
+                        </form>
+            
+                        {{post.votes_count}}
+            
+                        <form action="{% url 'main:post-downvote' slug=post.slug %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <input type="image" src="/media/caret-down-solid.svg" style="border:none">
+                        </form>
+                    </div>
+                </div>
+                <div class="col-sm-11">
+                    <p style="font-size: 18px; font-weight: bold;">{{post.title|safe}}</p>
+                    <div class="clr"></div>
+                    <p class="infopost">
+                    {% if comments and post.get_comment_numbers != 0 %}
+                        <a href="{% url 'main:post-detail' slug=post.slug %}" class="com">{{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}</a> 
+                    {% else %}
+                        <a href="{% url 'main:post-detail' slug=post.slug %}" class="com">No comments yet</a>    
+                    {% endif %}
+                        <span class="date">Posted {{post.created_at|timesince}} ago |</span> 
+                        by <a href="{% url 'profile' post.author %}">{{post.author}}</a>
+                    <p>{{post.content|safe}}</p>
+                    <table>
+                        {% if user == post.author %}
+                        <td>
+                            <form action="{% url 'main:post-delete' slug=post.slug %}">
+                                {% csrf_token %}
+                                <a href="{% url 'main:post-delete' slug=post.slug %}">Delete</a>
+                            </form>
+                        </td>
+                        {% endif %}
+                        <td>
+                        </td>
+                        <td>
+                            <a href="{% url 'main:post-detail' slug=post.slug %}" class="rm">Read more &raquo;</a>
+                        </td>
+                    </table>
+                    <hr>
+                </div>
+            </div>
         </div>
+
+        
+
     {% endfor %}
 
-    <script>
-        $(document).ready(function(event){
-            $(document).on('click','#vote', function(event){
-                event.preventDefault();
-                var pk = $(this).attr('value');
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'main:post-vote' slug=post.slug %}",
-                    data: {'id':pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
-                    dataType: 'json',
-                    success: function(resoponse){
-                        $('#vote-section').html(resoponse['form'])
-                        console.log($('#vote-section').html(resoponse['form'])); 
-                    },
-                    error: function(rs, e){
-                        console.log(rs.responseText);
-                    }
-                })
-            });
-        });
-    </script>
+    
 
 {% endblock content %}
