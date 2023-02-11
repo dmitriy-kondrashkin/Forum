@@ -13,6 +13,8 @@ IMPORT FROM CURRENT PROJECT
 from .forms import UserUpdateForm
 # Create your views here.
 def custom_login(request):
+    if request.user.is_authenticated:
+        return redirect('/')   
     if request.method == 'POST':
         form = LoginForm(request, request.POST)
         if form.is_valid():
@@ -34,6 +36,8 @@ def custom_login(request):
 
 
 def custom_signup(request):
+    if request.user.is_authenticated:
+        return redirect('/') 
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
