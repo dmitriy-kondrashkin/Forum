@@ -66,37 +66,53 @@
                         <p style="font-size: 18px; font-weight: bold;">Sidebar menu</p>
                         <div class="clr"></div>
                         <ul class="sb_menu">
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">TemplateInfo</a></li>
-                            <li><a href="#">Style Demo</a></li>
-                            <li><a href="#">Blog</a></li>
-                            <li><a href="#">Archives</a></li>
+                            <li><a href="{% url 'main:feed' %}">Feed</a></li>
                         </ul>
                     </div>
                     <div class="gadget">
-                        <p style="font-size: 18px; font-weight: bold;">Sponsors</p>
+                        <p style="font-size: 18px; font-weight: bold;">Most popular posts:</p>
                         <div class="clr"></div>
+                        {% for top_post in top_posts %}
                         <ul class="ex_menu">
-                            <li><a href="#">Lorem ipsum dolor</a><br />
-                                Donec libero. Suspendisse bibendum</li>
-                            <li><a href="#">Dui pede condimentum</a><br />
-                                Phasellus suscipit, leo a pharetra</li>
-                            <li><a href="#">Condimentum lorem</a><br />
-                                Tellus eleifend magna eget</li>
-                            <li><a href="#">Fringilla velit magna</a><br />
-                                Curabitur vel urna in tristique</li>
-                            <li><a href="#">Suspendisse bibendum</a><br />
-                                Cras id urna orbi tincidunt orci ac</li>
-                            <li><a href="#">Donec mattis</a><br />
-                            purus nec placerat bibendum</li>
+                            <li style="margin-top: -30px;">
+                                <a href="{% url 'main:post-detail' slug=top_post.slug %}">
+                                    <div class="row">
+                                        <div class="col-sm-6 text-center">
+                                            <span style="color: green;"><strong>+{{top_post.upvotes.all.count}}</strong></span>
+                                            <span style="color: red;"><strong>-{{top_post.downvotes.all.count}}</strong></span>
+                                        </div>
+                                        <div class="col-sm-6 text-center">
+                                            <strong>Comments: {{top_post.get_comment_numbers}}</strong>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 text-center">
+                                            <strong style="font-size: 14px;">{{top_post.title|slice:50|safe}}</strong>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 text-center">
+                                            {{top_post.content|slice:70}}...
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-top: 10px; margin-bottom: -15px;">
+                                        <div class="col-sm-12 text-center">
+                                            Posted by: {{top_post.author|slice:100}}
+                                        </div>
+                                    </div>
+                                </a>
+                                <hr>
+                            </li>
                         </ul>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="clr"></div>
             </div>
         </div>
-    </div>    
-    <div class="container">
+    </div>   
+
+    <div class="container" style="background-color: white; width: 970px;">
         <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
           <div class="col-md-4 d-flex align-items-center">
             <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">

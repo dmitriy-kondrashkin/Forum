@@ -17,14 +17,17 @@ from django.db.models import Q, Count, BooleanField, When, Case
 
 # Create your views here.
 def feed(request, slug=None):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
     comments = Comment.objects.all()
     posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')
     return render(request, 'main/feed.html', {'posts': posts,
-                                              'comments': comments})
+                                              'comments': comments,
+                                              'top_posts':top_posts})
 
 
 @login_required
 def post_create(request):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
     if request.method == 'POST':
         form = PostCreateForm(request.POST)
         if form.is_valid():
@@ -38,10 +41,12 @@ def post_create(request):
                 messages.error(request, error)
     else:
         form = PostCreateForm()
-    return render(request,'main/post_create.html', {'form':form})
+    return render(request,'main/post_create.html', {'form':form,
+                                                    'top_posts':top_posts})
 
 
 def post_detail(request, slug):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
     post = get_object_or_404(Post, slug=slug)
     comments = Comment.objects.filter(post=post, reply=None).order_by('-created_at')
     # is_voted = False
@@ -71,7 +76,8 @@ def post_detail(request, slug):
         comment_form = CommentForm()
     return render(request, 'main/post_detail.html', {'post':post,
                                                      'comment_form':comment_form,
-                                                     'comments':comments})
+                                                     'comments':comments,
+                                                     'top_posts':top_posts})
 
 
 @login_required
@@ -204,6 +210,7 @@ def reply_comment_update(request, slug):
 
 @login_required
 def post_update(request, slug):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
     post = get_object_or_404(Post, slug=slug)
     form = PostCreateForm(instance=post)
     if post.author == request.user:
@@ -218,11 +225,13 @@ def post_update(request, slug):
         messages.error(request, "You don't have permission to access")
         return redirect('/')
     return render(request, 'main/post_update.html', {'post':post,
-                                                     'form':form})
+                                                     'form':form,
+                                                     'top_posts':top_posts})
 
 
 @login_required
 def comment_update(request, slug):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
     comment = get_object_or_404(Comment, slug=slug)
     form = CommentForm(instance=comment)
     if comment.author == request.user:
@@ -236,7 +245,8 @@ def comment_update(request, slug):
         messages.error(request, "You don't have permission to access")
         return redirect('/')
     return render(request, 'main/comment_update.html', {'form':form,
-                                                        'comment':comment})
+                                                        'comment':comment,
+                                                        'top_posts':top_posts})
 
 
 def error_404(request, exception):

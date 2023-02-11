@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.db.models import Count
 """
 AUTH
 """
@@ -11,6 +12,7 @@ from django.contrib.auth import get_user_model
 IMPORT FROM CURRENT PROJECT
 """
 from .forms import UserUpdateForm
+from main.models import Post
 # Create your views here.
 def custom_login(request):
     if request.user.is_authenticated:
@@ -59,6 +61,7 @@ def custom_logout(request):
 
 @login_required
 def profile(request, username):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
     if request.method == 'POST':
         user = request.user
         form = UserUpdateForm(request.POST, request.FILES, instance=user)
@@ -72,5 +75,6 @@ def profile(request, username):
     user = get_user_model().objects.filter(username=username).first()
     if user:
         form = UserUpdateForm(instance=user)
-        return render(request, 'users/profile.html', {'form':form})
+        return render(request, 'users/profile.html', {'form':form,
+                                                      'top_posts':top_posts})
     return redirect('/')

@@ -2,12 +2,30 @@
 {% block title %}Feed{% endblock title %}
 
 {% block content %}
-<div class="article input-group">
-    <table>
-        <th> <a href="#"><img src="/media/default/avatar.jpg" width="40" height="40"/></th>
-            <th style="width: 565px;"><a style="text-decoration: none;" href="{% url 'main:post-create' %}"><input class="form-control" type="text" placeholder="Create post..."></a></th>
-    </table>    
-</div>
+
+    <div class="article">
+        <div class="row">
+            <div class="col-sm-1">
+                <img src="/media/default/avatar.jpg" width="40" height="40"/>
+            </div>
+            <div class="col-sm-9">
+                <a style="text-decoration: none;" href="{% url 'main:post-create' %}"><input class="form-control" type="text" placeholder="Create post..."></a>
+            </div>
+            <div class="col-sm-2">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sort by:
+                    </button>
+                    <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Upvotes</a></li>
+                    <li><a class="dropdown-item" href="#">Downvotes</a></li>
+                    <li><a class="dropdown-item" href="#">Date published</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     {% for post in posts %}
 
