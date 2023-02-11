@@ -84,7 +84,7 @@
                     <div class="clr"></div>
                     <p class="infopost">
                     {% if comments and post.get_comment_numbers != 0 %}
-                        <a href="{% url 'main:post-detail' slug=post.slug %}" class="com">{{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}</a> 
+                        <a href="{% url 'main:post-detail' slug=post.slug %}" class="btn btn-secondary btn-sm" style="background-color: #6ec1f3; border: none;"> {{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}</a> 
                     {% else %}
                         <a href="{% url 'main:post-detail' slug=post.slug %}" class="com">No comments yet</a>    
                     {% endif %}
