@@ -1,21 +1,26 @@
 """Django imports"""
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 """Current project imports"""
 from .forms import PostCreateForm, CommentForm
-from .models import Post, Vote, Comment
+from .models import Post, Comment
 from users.forms import UserUpdateForm
+from .utils import is_ajax
+from django.db.models import Q, Count, BooleanField, When, Case
+
 
 
 
 # Create your views here.
-def feed(request):
+def feed(request, slug=None):
     comments = Comment.objects.all()
-    posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'main/feed.html', {'posts':posts,
-                                              'comments':comments})
+    posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')
+    return render(request, 'main/feed.html', {'posts': posts,
+                                              'comments': comments})
 
 
 @login_required
@@ -39,6 +44,10 @@ def post_create(request):
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
     comments = Comment.objects.filter(post=post, reply=None).order_by('-created_at')
+    # is_voted = False
+    # if post.votes.filter(id=request.user.id).exists():
+    #     is_voted = True
+
     if request.method == 'POST':
         comment_form = CommentForm(request.POST or None)
         if comment_form.is_valid():
@@ -77,6 +86,71 @@ def post_delete(request, slug):
 
 
 @login_required
+def post_upvote(request, slug):
+    post = Post.objects.get(slug=slug)
+    is_downvote = False
+    for downvote in post.downvotes.all():
+        if downvote == request.user:
+            is_downvote = True
+            break
+    if is_downvote:
+        post.downvotes.remove(request.user)
+    is_upvote = False
+    for upvote in post.upvotes.all():
+        if upvote == request.user:
+            is_upvote = True
+            break
+    if not is_upvote:
+        post.upvotes.add(request.user)
+    if is_upvote:
+        post.upvotes.remove(request.user)
+    next = request.POST.get('next', '/')
+    return HttpResponseRedirect(next)
+
+
+@login_required
+def post_downvote(request, slug):
+    post = Post.objects.get(slug=slug)
+    is_upvote = False
+    for upvote in post.upvotes.all():
+        if upvote == request.user:
+            is_upvote = True
+            break
+    if is_upvote:
+        post.upvotes.remove(request.user)
+    is_downvote = False
+    for downvote in post.downvotes.all():
+        if downvote == request.user:
+            is_downvote = True
+            break
+    if not is_downvote:
+        post.downvotes.add(request.user)
+    if is_downvote:
+        post.downvotes.remove(request.user)
+    next = request.POST.get('next', '/')
+    return HttpResponseRedirect(next)
+
+
+# @login_required
+# def post_vote(request, slug):
+    # post = get_object_or_404(Post, id=request.POST.get('id'), slug=slug)
+    # is_voted = False
+    # if post.votes.filter(id=request.user.id).exists():
+    #     post.votes.remove(request.user)
+    #     is_voted = False
+    # else:
+    #     post.votes.add(request.user)
+    #     is_voted = True
+    # context = {
+    #     'post': post,
+    #     'is_voted': is_voted,
+    # }
+    # if is_ajax(request):
+    #     html = render_to_string('main/votes.html', context, request)
+    #     return JsonResponse({'form':html})
+
+
+@login_required
 def comment_delete(request, slug):
     comment = get_object_or_404(Comment, slug=slug, author = request.user)
     if comment.author == request.user:
@@ -99,6 +173,34 @@ def reply_comment_delete(request, slug):
         messages.error(request, "You don't have permission to do that!")
         return redirect(comment.get_absolute_url())
     return redirect('/')
+
+
+# @login_required
+# # get comment reply for certain comment
+# # if comment replies created with a similar CommentForm
+# # use this form for update comment reply
+# def reply_comment_update(request, slug):
+#     comment = get_object_or_404(Comment, slug=slug)
+
+@login_required
+def reply_comment_update(request, slug):
+    comment = get_object_or_404(Comment, slug=slug)
+    reply = Comment.objects.filter(reply_id = comment.id, author = request.user).first()
+    form = CommentForm(instance=reply)
+    if comment.author == request.user:
+        if request.method == 'POST':
+            form = CommentForm(request.POST, instance=reply)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'Your comment has been successfully updated!')
+                return redirect(comment.get_absolute_url())
+    else:
+        messages.error(request, "You don't have permission to access")
+        return redirect('/')
+    return render(request, 'main/reply_update.html',    {'form':form,
+                                                         'comment':comment,
+                                                         'reply':reply})
+
 
 @login_required
 def post_update(request, slug):
@@ -132,6 +234,7 @@ def comment_update(request, slug):
                 return redirect(comment.get_absolute_url())
     else:
         messages.error(request, "You don't have permission to access")
+        return redirect('/')
     return render(request, 'main/comment_update.html', {'form':form,
                                                         'comment':comment})
 

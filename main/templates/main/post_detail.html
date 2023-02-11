@@ -2,119 +2,206 @@
 {% block title %}{{post.title}} : {{post.author.username}}{% endblock title %}
     
 {% block content %}
+
     <div class="article">
-        <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-top: -7px; margin-bottom: -7px;">{{post.title}}</p>
-        <div class="clr"></div>
-        <p>Posted by <a href="#">{{post.author}}</a>
-        <p>{{post.content|safe}}<p>
-        {% if user == post.author %}
-            <table style="margin-top: -20px;">
-                <tr>
-                    <td>
-                        <form action="{% url 'main:post-update' slug=post.slug %}" method="post">
-                            <a href="{% url 'main:post-update' slug=post.slug %}">Update</a>
-                        </form>
-                    </td>
-                    <td style="width: 550px;"></td>
-                    <td>
-                        <form action="{% url 'main:post-delete' slug=post.slug %}" method="post">
-                            <a style="float:right" href="{% url 'main:post-delete' slug=post.slug %}">Delete</a>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-            <hr>
-        {% else %}
-            <hr style="margin-top: -27px;">
-        {% endif %}     
+        <div class="row">
+            <div class="col-sm-1 text-center" style="font-size: 22px; margin: auto">
+                <div class="vote-section">
+                    <form action="{% url 'main:post-upvote' slug=post.slug %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <input type="image" src="/media/caret-up-solid.svg" style="border:none">
+                    </form>
+        
+                    {{post.votes_count}}
+        
+                    <form action="{% url 'main:post-downvote' slug=post.slug %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <input type="image" src="/media/caret-down-solid.svg" style="border:none">
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-sm-11">
+                <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-top: -7px; margin-bottom: -7px;">{{post.title|safe}}</p>
+                <div class="clr"></div>
+                <p>Posted by <a href="{% url 'profile' post.author.username %}">{{post.author}}</a> | {{post.created_at|timesince}} ago
+                <p>{{post.content|safe}}<p>
+                {% if user == post.author %}
+                    <table style="margin-top: -20px;">
+                        <tr>
+                            <td>
+                                <form action="{% url 'main:post-update' slug=post.slug %}" method="post">
+                                    <a href="{% url 'main:post-update' slug=post.slug %}">Update</a>
+                                </form>
+                            </td>
+                            <td style="width: 550px;"></td>
+                            <td>
+                                <form action="{% url 'main:post-delete' slug=post.slug %}" method="post">
+                                    <a style="float:right" href="{% url 'main:post-delete' slug=post.slug %}">Delete</a>
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
+                    <hr>
+                {% else %}
+                    <hr style="margin-top: -27px;">
+                {% endif %}     
+            </div>
+        </div>
     </div>
+        
     {% if comments %}
         <div class="article">
             <p style="font-size: 26px; font-weight: bold; margin-top: 1px; margin-bottom: -7px;">
                 {{ post.get_comment_numbers }} comment{{ post.get_comment_numbers|pluralize }}:
             </p>
 
-<!-- |timesince -->
             {% for comment in comments %}
-            <div class="comment">
-                <blockquote class="blockquote">
-                    <p>{{comment.content}}</p>{{comment.num_of_replies}}
-                    <footer class="blockquote-footer">by {{comment.author|capfirst}}
-                        <button type="button" name="button" class="reply-btn btn btn-otline">Reply</button>
-                    </footer>
-                </blockquote>
+                <div class="comment">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <a href="#"><img style="border:2px solid #dedede;margin:10px 16px 10px 0;padding:0;" src="/media/default/avatar.jpg" width="40" height="40" alt="" class="userpic"/></a>
+                        </div>
+                        <div class="col-sm-10" style="margin: auto; margin-left: -40px;">
+                            <div class="row">
+                                <div class="col-sm-4" style="margin-left: -11px;">
+                                    <a href="{% url 'profile' comment.author.username %}">{{comment.author}}</a> says:
+                                </div>                  
+                            </div>
+                            <div class="row">
+                                {{comment.created_at|timesince}} ago
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            {{comment.content}}
+                        </div>
+                    </div>
+                    {% if user == comment.author %}
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <form action="{% url 'main:comment-update' slug=comment.slug %}" method="post">
+                                    {% csrf_token %}
+                                    <a href="{% url 'main:comment-update' slug=comment.slug %}">Update</a>
+                                </form> 
+                            </div>
+                            <div class="col-sm-2">
+                                <a type="button" name="button" class="reply-btn">{{comment.num_of_replies}} replies</a>
+                            </div>
+                            <div class="col-sm-8">
+                            </div>
+                            <div class="col-sm-1">
+                                <form action="{% url 'main:comment-delete' slug=comment.slug %}" method="post">
+                                    {% csrf_token %}
+                                    <a href="{% url 'main:comment-delete' slug=comment.slug %}">Delete</a>
+                                </form> 
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <a type="button" name="button" class="reply-btn">{{comment.num_of_replies}} replies</a>
+                            </div> 
+                        </div>
+                    {% endif %}
 
-                <div class="replied-comments container" style="display: none;">
-                    {% for reply in comment.replies.all %}
-                        <blockquote class="blockquote">
-                            <p>{{reply.content}}</p>
-                            <footer class="blockquote-footer">by {{reply.author|capfirst}}</footer>
-                            <a href="{% url 'main:comment-reply-delete' slug=comment.slug %}">delete</a>
-                        </blockquote>
-                    {% endfor %}
-                    <div class="form-group row">
+                    <div class="replied-comments" style="display: none;">
+                        <br>
+                        {% for reply in comment.replies.all %}
+                            <div class="row">
+                            <div class="col-sm-1">
+
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#"><img style="border:2px solid #dedede;margin:10px 16px 10px 0;padding:0;" src="/media/default/avatar.jpg" width="40" height="40" alt="" class="userpic"/></a>
+                            </div>
+                            <div class="col-sm-9" style="margin: auto; margin-left: -40px;">
+                                <div class="row">
+                                    <div class="col-sm-12" style="margin-left: -11px;">
+                                        <a href="#">{{reply.author}}</a> says:
+                                    </div>                  
+                                </div>
+                                <div class="row">
+                                    {{reply.created_at|timesince}} ago
+                                </div>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-sm-1">
+                            </div>
+                            <div class="col-sm-11">
+                                {{reply.content}}
+                            </div>
+                            </div>
+                            {% if user == reply.author %}
+                                <div class="row">
+                                    <div class="col-sm-1">
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <a href="{% url 'main:comment-reply-update' slug=comment.slug %}">update</a> 
+                                    </div>
+                                    <div class="col-sm-9">
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <a href="{% url 'main:comment-reply-delete' slug=comment.slug %}">delete</a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            </br>
+                        {% endfor %}
+
                         <form action="" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="comment_id" value="{{ comment.id }}">
-                            {{comment_form}}
-                            <input type="submit" value="Submit" class="btn btn-outline-success">
+                            {% if user.is_authenticated %}
+                                {% csrf_token %}
+                                <div class="row"> 
+                                    <div class="col-sm-1">
+
+                                    </div>
+                                    <div class="col-sm-9">
+                                        {{comment_form}}
+                                    </div>
+                                    <div class="col-sm-2">  
+                                        <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                        <input style="margin-left: 20px;" type="submit" value="Submit" class="btn btn-primary">
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="row"> 
+                                    <div class="col-sm-1">
+
+                                    </div>
+                                    <div class="col-sm-11">
+                                        <a style="text-decoration: none;" href="{% url 'login' %}?next={{request.path}}">
+                                            <input class="form-control" type="text" name="" id="" placeholder="Log in to add a comment">
+                                        </a> 
+                                    </div>
+                                </div>    
+                            {% endif %}
                         </form>
                     </div>
-                </div>  
-            </div>
-            {%  endfor %}
-
-
-    {% for comment in comments %}
-        
-            
-
-
-
-
-
-
-        <div class="clr"></div>
-        <div class="comment"> <a href="#"><img src="/media/default/avatar.jpg" width="40" height="40" alt="" class="userpic" /></a>
-            <p><a href="#">{{comment.author}}</a> Says:<br />
-            {{comment.created_at|date:"F jS,"}} at {{comment.created_at|date:"H:i a"}}</p>
-            <p>{{comment.content}}</p>
+                </div>
+            {% endfor %}
         </div>
-        {% if user == comment.author %}
-            <table>
-                <tr>
-                    <td>
-                        <form action="{% url 'main:comment-update' slug=comment.slug %}" method="post">
-                            {% csrf_token %}
-                            <a style="float:right" href="{% url 'main:comment-update' slug=comment.slug %}">Update</a>
-                        </form> 
-                    </td>
-                    <td style="width: 550px;"></td>
-                    <td>
-                        <form action="{% url 'main:comment-delete' slug=comment.slug %}" method="post">
-                            {% csrf_token %}
-                            <a style="float:right" href="{% url 'main:comment-delete' slug=comment.slug %}">Delete</a>
-                        </form> 
-                    </td>
-                </tr>
-            </table>
-        {% endif %}
-    {% endfor %}
-    </div>
+
     {% endif %}
 
     <div class="article">
         <p style="font-size: 26px; font-weight: bold;">Leave a comment</p>
         <div class="clr"></div>
         {% if user.is_authenticated %}
-        <form action="" method="post">
+        <form id="comment-form" action="" method="post">
             {% csrf_token %}
             <div class="flex" style="display: flex;">
             {{comment_form}} <button style="margin-left: 10px;" class="btn btn-primary">Post</button>
         </form>
     </div>
         {% else %}
-            <a class="btn btn-secondary" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a>   
+            <a style="text-decoration: none;" href="{% url 'login' %}?next={{request.path}}">
+                <input class="form-control" type="text" name="" id="" placeholder="Log in to add a comment">
+            </a> 
         {% endif %}
 </div> 
 
@@ -122,4 +209,21 @@
     $(this).parent().parent().next('.replied-comments').fadeToggle()
 });</script>
 
+<!-- <script>
+    $(document).on('submit', '#comment-form', function(e){
+        e.preventDefault();
+
+        $.ajax({
+            type:'POST', 
+            url:'',
+            data:{
+                content:$('{{comment_form}}').val(),
+                csrfmiddlewaretoken:$('inputs[content=csrfmiddlewaretoken]').val()
+            },
+            success: function (){
+
+            }
+        })
+    })
+</script> -->
 {% endblock content %}

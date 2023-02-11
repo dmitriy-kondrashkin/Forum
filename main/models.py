@@ -13,9 +13,11 @@ class Post(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    upvotes = models.ManyToManyField(get_user_model(), related_name='upvotes', blank=True)
+    downvotes = models.ManyToManyField(get_user_model(), related_name='downvotes', blank=True)
 
     class Meta:
-        ordering = ['created_at']
+        ordering = ['-created_at']
 
     def get_absolute_url(self):
         kwargs = {
@@ -37,11 +39,10 @@ class Post(models.Model):
     @property
     def get_comment_numbers(self):
         return Comment.objects.filter(post=self).count()
-
     
-class Vote(models.Model):
-    voter = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    @property
+    def votes_count(self):
+        return (int(self.upvotes.count())-int(self.downvotes.count()))
 
 
 class Comment(models.Model):
@@ -75,6 +76,7 @@ class Comment(models.Model):
     
     def num_of_replies(self):
         return Comment.objects.filter(reply=self).count()
+        
 
     def get_absolute_url(self):
         kwargs = {'slug': self.post.slug}

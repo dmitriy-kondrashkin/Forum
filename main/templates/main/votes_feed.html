@@ -1,0 +1,9 @@
+<form action="{% url 'main:post-vote' slug=post.slug %}" method="post">
+    {% csrf_token %}
+    {% if is_voted %}
+        <button type="submit" class="vote-button" id="vote" name="post_id" value="{{ post.id }}" btn="btn btn-outline">Unvote</button>
+    {% else %}
+        <button type="submit" id="vote" name="post_id" value="{{ post.id }}" btn="btn btn-outline">Vote</button>
+    {% endif %}
+</form>
+{{post.votes_count}}

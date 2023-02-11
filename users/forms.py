@@ -9,13 +9,28 @@ class SignupForm(UserCreationForm):
     class Meta:
         model = get_user_model()
         fields = ['username', 'email', 'password1', 'password2']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            style_data = {
+                'class': 'form-control',
+            }
+            self.fields[str(field)].widget.attrs.update(style_data)
 
 
 class LoginForm(AuthenticationForm):
     class Meta:
         model = get_user_model()
         fields = ['__all__']
-
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            style_data = {
+                'class': 'form-control',
+            }
+            self.fields[str(field)].widget.attrs.update(style_data)
 
 
 class UserUpdateForm(forms.ModelForm):
