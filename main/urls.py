@@ -4,7 +4,13 @@ from . import views
 app_name = 'main'
 
 urlpatterns = [
-    path('', views.feed, name='feed'),
+    path('feed/', views.feed, name='feed'),
+    path('feed/most_upvoted/', views.most_upvoted, name='most-upvoted'),
+    path('feed/most_downvoted/', views.most_downvoted, name='most-downvoted'),
+    path('feed/most_recent', views.most_recent, name='most-recent'),
+    path('feed/oldest', views.the_oldest, name='the-oldest'),
+    path('feed/most_comments', views.most_comments, name='most-comments'),
+    path('feed/lest_comments', views.lest_comments, name='lest-comments'),
     path('post_create/', views.post_create, name='post-create'),
     path('post/<slug>/', views.post_detail, name='post-detail'),
     path('post/<slug>/delete', views.post_delete, name='post-delete'),

@@ -8,44 +8,74 @@
             <div class="col-sm-1">
                 <img src="/media/default/avatar.jpg" width="40" height="40"/>
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-11">
                 <a style="text-decoration: none;" href="{% url 'main:post-create' %}"><input class="form-control" type="text" placeholder="Create post..."></a>
             </div>
-            <div class="col-sm-2">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Sort by:
-                    </button>
-                    <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Upvotes</a></li>
-                    <li><a class="dropdown-item" href="#">Downvotes</a></li>
-                    <li><a class="dropdown-item" href="#">Date published</a></li>
-                    </ul>
+        </div>
+        <br>
+        <br>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-4" style="font-size: 20px;">
+                    Order by:
+                </div>
+                <div class="col-sm-2">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" style="background-color: #6ec1f3; border: none;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Votes
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'main:most-upvoted' %}">The most upvoted</a></li>
+                            <li><a class="dropdown-item" href="{% url 'main:most-downvoted' %}">The most downvotes</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" style="background-color: #6ec1f3; border: none;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Time
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'main:most-recent' %}">The most recent</a></li>
+                            <li><a class="dropdown-item" href="{% url 'main:the-oldest' %}">The oldest</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" style="background-color: #6ec1f3; border: none;"   type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Comments
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'main:most-comments' %}">Most comments</a></li>
+                            <li><a class="dropdown-item" href="{% url 'main:lest-comments' %}">Lest comments</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
+    <hr>
 
     {% for post in posts %}
 
-
         <div class="article">
-            <div class="row">
+            <div class="row d-flex justify-content-center">
                 <div class="col-sm-1 text-center" style="font-size: 22px; margin: auto;">
-                    <div class="vote-section">
+                    <div class="vote-section" style="margin-left:-17px;">
                         <form action="{% url 'main:post-upvote' slug=post.slug %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.path }}">
-                            <input type="image" src="/media/caret-up-solid.svg" style="border:none">
+                            <input type="image" src="/media/caret-up-solid.svg" width="35" height="35" style="border:none">
                         </form>
-                        <span style="color: green; font-size: 22px;">{{post.upvotes.all.count}}</span>
+                        {{post.upvotes.all.count}}
                         <p></p>
-                        <span style="color: red; font-size: 22px;">{{post.downvotes.all.count}}</span>
+                        {{post.downvotes.all.count}}
                         <form action="{% url 'main:post-downvote' slug=post.slug %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.path }}">
-                            <input type="image" src="/media/caret-down-solid.svg" style="border:none">
+                            <input type="image" src="/media/caret-down-solid.svg" width="35" height="35" style="border:none">
                         </form>
                     </div>
                 </div>

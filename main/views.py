@@ -25,6 +25,63 @@ def feed(request, slug=None):
                                               'top_posts':top_posts})
 
 
+"""
+ORDER SECTION
+"""
+def most_upvoted(request, slug=None):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
+    comments = Comment.objects.all()
+    posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')
+    return render(request, 'main/feed.html', {'posts': posts,
+                                              'comments': comments,
+                                              'top_posts':top_posts})
+
+
+def most_downvoted(request, slug=None):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
+    comments = Comment.objects.all()
+    posts = Post.objects.annotate(upvotes_count=Count('downvotes')).order_by('-upvotes_count')
+    return render(request, 'main/feed.html', {'posts': posts,
+                                              'comments': comments,
+                                              'top_posts':top_posts})
+
+
+def most_recent(request, slug=None):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
+    comments = Comment.objects.all()
+    posts = Post.objects.all().order_by('-created_at')
+    return render(request, 'main/feed.html', {'posts': posts,
+                                              'comments': comments,
+                                              'top_posts':top_posts})
+
+
+def the_oldest(request, slug=None):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
+    comments = Comment.objects.all()
+    posts = Post.objects.all().order_by('created_at')
+    return render(request, 'main/feed.html', {'posts': posts,
+                                              'comments': comments,
+                                              'top_posts':top_posts})
+
+
+def most_comments(request, slug=None):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
+    comments = Comment.objects.all()
+    posts = Post.objects.annotate(upvotes_count=Count('comments')).order_by('-comments')
+    return render(request, 'main/feed.html', {'posts': posts,
+                                              'comments': comments,
+                                              'top_posts':top_posts})
+
+
+def lest_comments(request, slug=None):
+    top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
+    comments = Comment.objects.all()
+    posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('comments')
+    return render(request, 'main/feed.html', {'posts': posts,
+                                              'comments': comments,
+                                              'top_posts':top_posts})
+
+
 @login_required
 def post_create(request):
     top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
