@@ -18,7 +18,7 @@ from django.db.models import Q, Count, BooleanField, When, Case
 # Create your views here.
 def feed(request, slug=None):
     comments = Comment.objects.all()
-    posts = Post.objects.all().order_by('-upvotes')
+    posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')
     return render(request, 'main/feed.html', {'posts': posts,
                                               'comments': comments})
 

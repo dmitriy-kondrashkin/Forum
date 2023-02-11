@@ -21,9 +21,9 @@
                             <input type="hidden" name="next" value="{{ request.path }}">
                             <input type="image" src="/media/caret-up-solid.svg" style="border:none">
                         </form>
-            
-                        {{post.votes_count}}
-            
+                        <span style="color: green; font-size: 22px;">{{post.upvotes.all.count}}</span>
+                        <p></p>
+                        <span style="color: red; font-size: 22px;">{{post.downvotes.all.count}}</span>
                         <form action="{% url 'main:post-downvote' slug=post.slug %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.path }}">
