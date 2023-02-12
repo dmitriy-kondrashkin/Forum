@@ -20,9 +20,11 @@ from django.conf import settings
 from django.conf.urls import handler404
 from dotenv import load_dotenv
 import os
+from .views import start_redirect_view
 
 urlpatterns = [
     path(str(os.getenv('ADMIN_URL')), admin.site.urls),
+    path('', start_redirect_view, name='start_page'),
     path('', include('main.urls')),
     path('', include('users.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
