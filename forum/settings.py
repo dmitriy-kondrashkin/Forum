@@ -28,7 +28,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'kondrashkin0416.pythonanywhere.com']
 
 #CSRF_COOKIE_SECURE = True
 
@@ -157,8 +157,6 @@ LOGOUT_REDIRECT_URL = '/feed'
 
 load_dotenv()
 RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
-
-SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 
 RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))
 
