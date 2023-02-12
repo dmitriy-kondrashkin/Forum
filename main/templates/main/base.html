@@ -69,6 +69,7 @@
                             <li><a href="{% url 'main:feed' %}">Feed</a></li>
                         </ul>
                     </div>
+                    {% if user.is_authenticated %}
                     <div class="gadget">
                         <p style="font-size: 18px; font-weight: bold;">Most popular posts:</p>
                         <div class="clr"></div>
@@ -105,6 +106,7 @@
                         </ul>
                         {% endfor %}
                     </div>
+                    {% endif    %}
                 </div>
                 <div class="clr"></div>
             </div>
@@ -117,7 +119,7 @@
             <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
               <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"/></svg>
             </a>
-            <span class="mb-3 mb-md-0 text-muted">&copy; 2022 Company, Inc</span>
+            <span class="mb-3 mb-md-0 text-muted">Forum portal 2023</span>
           </div>
       
           <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">

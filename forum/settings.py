@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -142,10 +142,34 @@ MEDIAFILES_DIRS = [os.path.join(BASE_DIR, 'media'),]
 MEDIA_URL = 'media/'
 
 LOGIN_URL = '/login' 
+
 LOGIN_REDIRECT_URL = '/feed'
+
 LOGOUT_REDIRECT_URL = '/feed'
+
+# Google recaptcha
 
 load_dotenv()
 RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
+
 SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+
 RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))
+
+# Email authentication
+
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+
+EMAIL_FROM = os.getenv('EMAIL_FROM')
+
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+
+EMAIL_USE_TLS = True
+
+PASSWORD_RESET_TIMEOUT = 8000

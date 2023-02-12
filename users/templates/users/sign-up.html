@@ -1,11 +1,18 @@
 {% extends 'main/base.html' %}
 {% block title %}Home{% endblock title %}
 {% block content %}
-    <form action="" method="post">
+    <form action="" method="post" onsubmit="return checkForm(this);">
         <div class="article">
             {% csrf_token %}
             {{form.as_p}}
-            <button class="btn btn-success" type="submit">Sign-up</button>
+            <button  name="myButton" value="Submit" type="submit" class="btn btn-success">Sign-up</button>
         </div>
     </form>
+
+    <script>
+        var checkForm = function(form) {
+          form.myButton.disabled = true;
+          return true;
+        };
+    </script>
 {% endblock content %}

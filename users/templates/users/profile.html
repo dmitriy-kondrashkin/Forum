@@ -4,7 +4,7 @@
 {% block content %}
 {% if user.username == form.instance.username %}
     <div class="article">
-        <h5> Profile update: </h5>
+        <span style="font-size: 18px; font-weight: bold;"> Profile update:</span>
         <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <p>
@@ -17,7 +17,13 @@
             </p>
             <p>
                 {{form.email.label}}:
-                {{form.email}}
+                <input class="form-control" readonly disabled type="text" placeholder="******{{form.instance.email|slice:'2:6'}}*********.com" >
+                {% if user.is_active %}
+                <span style="background-color:  #198754; color: white;">Your email is confirmed.</span>
+                {% endif %}
+            </p>
+            <p>
+                <a href="{% url 'profile-password-reset-request' %}">Change password?</a>
             </p>
             <table>
                 <tr>

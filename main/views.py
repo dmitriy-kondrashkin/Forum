@@ -40,7 +40,7 @@ def most_upvoted(request, slug=None):
 def most_downvoted(request, slug=None):
     top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
     comments = Comment.objects.all()
-    posts = Post.objects.annotate(upvotes_count=Count('downvotes')).order_by('-upvotes_count')
+    posts = Post.objects.annotate(downvotes_count=Count('downvotes')).order_by('-downvotes_count')
     return render(request, 'main/feed.html', {'posts': posts,
                                               'comments': comments,
                                               'top_posts':top_posts})
@@ -67,7 +67,7 @@ def the_oldest(request, slug=None):
 def most_comments(request, slug=None):
     top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
     comments = Comment.objects.all()
-    posts = Post.objects.annotate(upvotes_count=Count('comments')).order_by('-comments')
+    posts = Post.objects.annotate(comment_count=Count('comments')).order_by('-comment_count')
     return render(request, 'main/feed.html', {'posts': posts,
                                               'comments': comments,
                                               'top_posts':top_posts})
@@ -76,11 +76,14 @@ def most_comments(request, slug=None):
 def lest_comments(request, slug=None):
     top_posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('-upvotes_count')[:5]
     comments = Comment.objects.all()
-    posts = Post.objects.annotate(upvotes_count=Count('upvotes')).order_by('comments')
+    posts = Post.objects.annotate(comment_count=Count('comments')).order_by('comment_count')
     return render(request, 'main/feed.html', {'posts': posts,
                                               'comments': comments,
                                               'top_posts':top_posts})
 
+"""
+END OF ORDER SECTION
+"""
 
 @login_required
 def post_create(request):
@@ -92,7 +95,7 @@ def post_create(request):
             new_post.author = request.user
             new_post.post_slug = new_post.title.lower()
             new_post.save()
-            return redirect('/')
+            return redirect('/feed')
         else:
             for error in list(form.errors.items()):
                 messages.error(request, error)
@@ -142,10 +145,10 @@ def post_delete(request, slug):
     post = get_object_or_404(Post, slug=slug, author = request.user)
     if request.user == post.author:
         post.delete()
-        return redirect('/')
+        return redirect('/feed')
     else:
         messages.error(f"It's not your post!")
-    return redirect('/')
+    return redirect('/feed')
 
 
 @login_required
@@ -167,7 +170,7 @@ def post_upvote(request, slug):
         post.upvotes.add(request.user)
     if is_upvote:
         post.upvotes.remove(request.user)
-    next = request.POST.get('next', '/')
+    next = request.POST.get('next', '/feed')
     return HttpResponseRedirect(next)
 
 
@@ -190,7 +193,7 @@ def post_downvote(request, slug):
         post.downvotes.add(request.user)
     if is_downvote:
         post.downvotes.remove(request.user)
-    next = request.POST.get('next', '/')
+    next = request.POST.get('next', '/feed')
     return HttpResponseRedirect(next)
 
 
@@ -219,7 +222,7 @@ def comment_delete(request, slug):
     if comment.author == request.user:
         comment.delete()
         return redirect(comment.get_absolute_url())
-    return redirect('/')
+    return redirect('/feed')
 
 
 @login_required
@@ -235,7 +238,7 @@ def reply_comment_delete(request, slug):
     else:
         messages.error(request, "You don't have permission to do that!")
         return redirect(comment.get_absolute_url())
-    return redirect('/')
+    return redirect('/feed')
 
 
 # @login_required
@@ -259,7 +262,7 @@ def reply_comment_update(request, slug):
                 return redirect(comment.get_absolute_url())
     else:
         messages.error(request, "You don't have permission to access")
-        return redirect('/')
+        return redirect('/feed')
     return render(request, 'main/reply_update.html',    {'form':form,
                                                          'comment':comment,
                                                          'reply':reply})
@@ -280,7 +283,7 @@ def post_update(request, slug):
                 return redirect(post.get_absolute_url())
     else:
         messages.error(request, "You don't have permission to access")
-        return redirect('/')
+        return redirect('/feed')
     return render(request, 'main/post_update.html', {'post':post,
                                                      'form':form,
                                                      'top_posts':top_posts})
@@ -300,7 +303,7 @@ def comment_update(request, slug):
                 return redirect(comment.get_absolute_url())
     else:
         messages.error(request, "You don't have permission to access")
-        return redirect('/')
+        return redirect('/feed')
     return render(request, 'main/comment_update.html', {'form':form,
                                                         'comment':comment,
                                                         'top_posts':top_posts})
