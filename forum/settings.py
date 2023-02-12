@@ -142,8 +142,8 @@ MEDIAFILES_DIRS = [os.path.join(BASE_DIR, 'media'),]
 MEDIA_URL = 'media/'
 
 LOGIN_URL = '/login' 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/feed'
+LOGOUT_REDIRECT_URL = '/feed'
 
 load_dotenv()
 RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))

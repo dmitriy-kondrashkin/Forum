@@ -28,7 +28,7 @@ def custom_login(request):
                 login(request, user)
                 messages.success(request,f'You have been successfully\
                                  logged in as {user.username}')
-                return redirect('/')
+                return redirect('/feed')
             else:
                 for error in list(form.errors.items()):
                     messages.error(request, error)
@@ -56,7 +56,7 @@ def custom_signup(request):
 
 def custom_logout(request):
     logout(request)
-    return redirect('/')
+    return redirect('/feed')
 
 
 @login_required
@@ -77,4 +77,4 @@ def profile(request, username):
         form = UserUpdateForm(instance=user)
         return render(request, 'users/profile.html', {'form':form,
                                                       'top_posts':top_posts})
-    return redirect('/')
+    return redirect('/feed')
