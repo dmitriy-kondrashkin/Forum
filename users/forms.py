@@ -2,9 +2,12 @@ from django.forms import Form
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
+from captcha.fields import ReCaptchaField
+from captcha.widgets import ReCaptchaV2Checkbox
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(required=False)
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
 
     class Meta:
         model = get_user_model()
