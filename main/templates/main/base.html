@@ -78,8 +78,7 @@
                                 <a href="{% url 'main:post-detail' slug=top_post.slug %}">
                                     <div class="row">
                                         <div class="col-sm-6 text-center">
-                                            <span style="color: green;"><strong>+{{top_post.upvotes.all.count}}</strong></span>
-                                            <span style="color: red;"><strong>-{{top_post.downvotes.all.count}}</strong></span>
+                                            <strong>Upvotes: {{top_post.upvotes.all.count}}</strong>
                                         </div>
                                         <div class="col-sm-6 text-center">
                                             <strong>Comments: {{top_post.get_comment_numbers}}</strong>

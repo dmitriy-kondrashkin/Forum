@@ -6,19 +6,19 @@
     <div class="article">
         <div class="row">
             <div class="col-sm-1 text-center" style="font-size: 22px; margin: auto">
-                <div class="vote-section">
+                <div class="vote-section" style="margin-left:-17px;">
                     <form action="{% url 'main:post-upvote' slug=post.slug %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.path }}">
-                        <input type="image" src="/media/caret-up-solid.svg" style="border:none">
+                        <input type="image" src="/media/caret-up-solid.svg" width="35" height="35" style="border:none">
                     </form>
-        
-                    {{post.votes_count}}
-        
+                    {{post.upvotes.all.count}}
+                    <p></p>
+                    {{post.downvotes.all.count}}
                     <form action="{% url 'main:post-downvote' slug=post.slug %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.path }}">
-                        <input type="image" src="/media/caret-down-solid.svg" style="border:none">
+                        <input type="image" src="/media/caret-down-solid.svg" width="35" height="35" style="border:none">
                     </form>
                 </div>
             </div>
