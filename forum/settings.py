@@ -26,9 +26,9 @@ load_dotenv()
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['dkondrashkin416.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 #CSRF_COOKIE_SECURE = True
 
@@ -126,13 +126,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static/assets"
 ]
 
-STATIC_ROOT = [os.path.join(BASE_DIR, 'static/'),]
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -143,9 +143,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-MEDIAFILES_DIRS = [os.path.join(BASE_DIR, 'media'),]
-
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 
 # Auth
 
@@ -166,7 +164,7 @@ RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))
 
 # Email authentication
 load_dotenv()
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_BACKEND = str(os.getenv('EMAIL_BACKEND'))
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_FROM = os.getenv('EMAIL_FROM')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
