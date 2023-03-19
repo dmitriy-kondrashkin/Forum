@@ -30,9 +30,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-#CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 
-#SESSION_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 
 # Application definition
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
     'captcha',
+    'debug_toolbar',
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -58,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'forum.urls'
@@ -153,7 +155,7 @@ LOGIN_REDIRECT_URL = '/feed'
 
 LOGOUT_REDIRECT_URL = '/feed'
 
-AUTHENTICATION_BACKENDS = ['main.backends.EmailBackend']
+AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend']
 
 # Google recaptcha
 
@@ -173,3 +175,11 @@ EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_USE_TLS = True
 
 PASSWORD_RESET_TIMEOUT = 8000
+
+# Django Debug Toolbar
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
